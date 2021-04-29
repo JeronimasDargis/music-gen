@@ -1,10 +1,17 @@
 <template>
-  <div />
+  <div>
+    <Input />
+  </div>
 </template>
 
 <script>
 import * as THREE from "three";
+import Input from "./components/Input";
+
 export default {
+  components: {
+    Input,
+  },
   name: "App",
   mounted() {
     const scene = new THREE.Scene();
@@ -15,7 +22,7 @@ export default {
       1000
     );
 
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
