@@ -27,6 +27,7 @@ export default {
       const fileUrl = URL.createObjectURL(files[0]);
       player.src = fileUrl;
       player.play();
+      this.$emit("audio-upload");
     },
   },
 };

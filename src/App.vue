@@ -1,11 +1,12 @@
 <template>
   <div>
-    <Input />
+    <Input @audio-upload="initWave()" />
   </div>
 </template>
 
 <script>
 import * as THREE from "three";
+import * as TWEEN from "@tweenjs/tween.js";
 import Input from "./components/Input";
 import { TrackballControls } from "../static/TrackballControls.js";
 
@@ -16,13 +17,17 @@ export default {
     spotLightColor: 0xffffff,
     boxColor: 0x1a63ed,
     angle: 0,
-    gridSize: 10,
-    velocity: 0.1,
+    waveCol: 0,
+    waveRow: 0,
+    gridSize: 50,
     mesh: null,
     boxes: [],
-    amplitude: -1,
+    wave: {
+      velocity: 0.05,
+      amplitude: -20,
+      waveLength: 242,
+    },
     frequency: 0,
-    waveLength: 242,
     scene: null,
     camera: null,
     renderer: null,
@@ -109,24 +114,7 @@ export default {
       this.scene.add(this.directionalLight);
       this.scene.add(this.directionalLight.target);
     },
-    //  addGUIControls() {
-    //   this.gui = new dat.GUI();
-    //   this.gui.add(this, 'amplitude', -10, .2);
-    //   this.gui.add(this, 'velocity', 0, .5);
-    //   this.gui.add(this, 'waveLength', 100, 500);
-    //   this.controller = this.gui.add(this, 'gridSize', 24, 150);
 
-    //   this.controller.onFinishChange((value) => {
-    //     this.gridSize = Math.floor(value);
-
-    //     this.clearScene();
-
-    //     this.col = this.gridSize
-    //     this.row = this.gridSize;
-
-    //     this.addBoxes(this.scene);
-    //   });
-    // },
     addRenderer() {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.shadowMap.enabled = true;
@@ -194,12 +182,12 @@ export default {
         for (let j = 0; j < row; j++) {
           const distance = this.distance(j, i, row * 0.5, col * 0.5);
 
-          const offset = this.map(distance, 0, this.waveLength, -100, 100);
+          const offset = this.map(distance, 0, this.wave.waveLength, -100, 100);
           const angle = this.angle + offset;
           this.boxes[i][j].scale.y = this.map(
             Math.sin(angle),
             -1,
-            -this.amplitude,
+            -this.wave.amplitude,
             0.001,
             1
           );
@@ -211,7 +199,44 @@ export default {
 
       this.mesh.instanceMatrix.needsUpdate = true;
 
-      this.angle -= this.velocity;
+      this.angle -= this.wave.velocity;
+    },
+    initWave() {
+      // this.gridSize = 100;
+
+      new TWEEN.Tween(this.wave)
+        .to(
+          {
+            velocity: 0.1,
+            amplitude: -1,
+          },
+          5000
+        )
+        .start();
+
+      setTimeout(() => {
+        new TWEEN.Tween(this.wave)
+          .to(
+            {
+              waveLength: 100,
+              amplitude: -5,
+            },
+            5000
+          )
+          .start();
+      }, 5000);
+      setTimeout(() => {
+        new TWEEN.Tween(this.wave)
+          .to(
+            {
+              waveLength: 244,
+              velocity: 0.3,
+              amplitude: -1,
+            },
+            5000
+          )
+          .start();
+      }, 10000);
     },
     distance(x1, y1, x2, y2) {
       return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -256,18 +281,12 @@ export default {
     },
     animate() {
       requestAnimationFrame(this.animate);
+      TWEEN.update();
       this.drawWave();
       this.controls.update();
       this.renderer.render(this.scene, this.camera);
     },
-    // onResize() {
-    //   const ww = window.innerWidth;
-    //   const wh = window.innerHeight;
 
-    //   this.camera.aspect = ww / wh;
-    //   this.camera.updateProjectionMatrix();
-    //   this.renderer.setSize(ww, wh);
-    // },
     onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
