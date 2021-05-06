@@ -36,8 +36,8 @@ export default {
 <style scoped>
 .input {
   position: absolute;
-  width: 100vw;
-  height: 100vh;
+  width: 10vw;
+  height: 10vh;
   display: flex;
   align-content: center;
 }

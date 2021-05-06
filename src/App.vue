@@ -7,16 +7,18 @@
 <script>
 import * as THREE from "three";
 import Input from "./components/Input";
+import { TrackballControls } from "../static/TrackballControls.js";
 
 export default {
   data: () => ({
-    backgroundColor: 0xed1a21,
+    backgroundColor: "#a9a9a9",
     ambientLightColor: 0xffffff,
     spotLightColor: 0xffffff,
     boxColor: 0x1a63ed,
     angle: 0,
-    gridSize: 30,
+    gridSize: 10,
     velocity: 0.1,
+    mesh: null,
     boxes: [],
     amplitude: -1,
     frequency: 0,
@@ -42,12 +44,18 @@ export default {
       1000
     );
     this.camera.position.set(-100, 100, -100);
-    this.controls = new THREE.OrbitControls(
+
+    this.addRenderer();
+
+    document.body.appendChild(this.renderer.domElement);
+
+    this.controls = new TrackballControls(
       this.camera,
       this.renderer.domElement
     );
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.04;
+
+    // this.controls.enableDamping = true;
+    // this.controls.dampingFactor = 0.04;
 
     this.controls.addEventListener("start", () => {
       requestAnimationFrame(() => {
@@ -75,7 +83,7 @@ export default {
 
     this.animate();
 
-    this.addRenderer();
+    window.addEventListener("resize", this.onWindowResize, false);
   },
 
   methods: {
@@ -156,10 +164,10 @@ export default {
 
       let ii = 0;
 
-      for (let i = 0; i < this.col; i++) {
+      for (let i = 0; i < col; i++) {
         this.boxes[i] = [];
 
-        for (let j = 0; j < this.row; j++) {
+        for (let j = 0; j < row; j++) {
           const pivot = new THREE.Object3D();
           this.boxes[i][j] = pivot;
 
@@ -178,11 +186,13 @@ export default {
       this.mesh.instanceMatrix.needsUpdate = true;
     },
     drawWave() {
+      const col = this.gridSize;
+      const row = this.gridSize;
       let ii = 0;
 
-      for (let i = 0; i < this.col; i++) {
-        for (let j = 0; j < this.row; j++) {
-          const distance = this.distance(j, i, this.row * 0.5, this.col * 0.5);
+      for (let i = 0; i < col; i++) {
+        for (let j = 0; j < row; j++) {
+          const distance = this.distance(j, i, row * 0.5, col * 0.5);
 
           const offset = this.map(distance, 0, this.waveLength, -100, 100);
           const angle = this.angle + offset;
@@ -245,25 +255,24 @@ export default {
       this.scene.add(gridHelper);
     },
     animate() {
-      this.stats.begin();
-
+      requestAnimationFrame(this.animate);
       this.drawWave();
-
       this.controls.update();
-
       this.renderer.render(this.scene, this.camera);
-
-      this.stats.end();
-
-      requestAnimationFrame(this.animate.bind(this));
     },
-    onResize() {
-      const ww = window.innerWidth;
-      const wh = window.innerHeight;
+    // onResize() {
+    //   const ww = window.innerWidth;
+    //   const wh = window.innerHeight;
 
-      this.camera.aspect = ww / wh;
+    //   this.camera.aspect = ww / wh;
+    //   this.camera.updateProjectionMatrix();
+    //   this.renderer.setSize(ww, wh);
+    // },
+    onWindowResize() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
-      this.renderer.setSize(ww, wh);
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.animate();
     },
   },
 };

@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable camelcase */
 /* eslint-disable no-var */
 import {
