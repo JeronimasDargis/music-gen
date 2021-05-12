@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Input @audio-upload="initWave()" />
+    <Input @audio-upload="initWave" />
   </div>
 </template>
 
@@ -33,6 +33,7 @@ export default {
     renderer: null,
     spotLight: null,
     controls: null,
+    currentBuffer: null,
   }),
   components: {
     Input,
@@ -40,6 +41,11 @@ export default {
   name: "App",
 
   mounted() {
+    // Set up audio context
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContext();
+    console.log(audioContext);
+
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
     this.camera = new THREE.PerspectiveCamera(
@@ -83,8 +89,6 @@ export default {
     this.addFloor();
 
     this.addBoxes();
-
-    // this.addGUIControls();
 
     this.animate();
 
@@ -201,7 +205,8 @@ export default {
 
       this.angle -= this.wave.velocity;
     },
-    initWave() {
+    initWave(audioUrl) {
+      console.log(`url `, audioUrl);
       // this.gridSize = 100;
 
       new TWEEN.Tween(this.wave)
