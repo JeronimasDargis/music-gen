@@ -99,12 +99,13 @@ export default {
 
   methods: {
     drawAudio(url) {
-      fetch(url)
+      return fetch(url)
         .then((response) => response.arrayBuffer())
         .then((arrayBuffer) => this.audioContext.decodeAudioData(arrayBuffer))
-        .then((audioBuffer) =>
-          this.draw(this.normalizeData(this.filterData(audioBuffer)))
-        );
+        .then((audioBuffer) => {
+          this.draw(this.normalizeData(this.filterData(audioBuffer)));
+          return this.normalizeData(this.filterData(audioBuffer));
+        });
     },
 
     draw(normalizedData) {
@@ -128,6 +129,7 @@ export default {
         } else if (height > canvas.offsetHeight / 2) {
           height = height > canvas.offsetHeight / 2;
         }
+
         this.drawLineSegment(ctx, x, height, width, (i + 1) % 2);
       }
     },
@@ -284,42 +286,58 @@ export default {
 
       this.angle -= this.wave.velocity;
     },
-    initWave(audioUrl) {
+    async initWave(audioUrl) {
       // this.gridSize = 100;
-      this.drawAudio(audioUrl);
-      new TWEEN.Tween(this.wave)
-        .to(
-          {
-            velocity: 0.1,
-            amplitude: -1,
-          },
-          5000
-        )
-        .start();
+      const data = await this.drawAudio(audioUrl);
 
-      setTimeout(() => {
-        new TWEEN.Tween(this.wave)
-          .to(
-            {
-              waveLength: 100,
-              amplitude: -5,
-            },
-            5000
-          )
-          .start();
-      }, 5000);
-      setTimeout(() => {
-        new TWEEN.Tween(this.wave)
-          .to(
-            {
-              waveLength: 244,
-              velocity: 0.3,
-              amplitude: -1,
-            },
-            5000
-          )
-          .start();
-      }, 10000);
+      data.forEach((item, id) => {
+        const height = item * 10;
+        setTimeout(() => {
+          console.log(-height);
+          new TWEEN.Tween(this.wave)
+            .to(
+              {
+                amplitude: -height,
+              },
+              1000
+            )
+            .start();
+        }, 1000 * id);
+      });
+
+      // new TWEEN.Tween(this.wave)
+      //   .to(
+      //     {
+      //       velocity: 0.1,
+      //       amplitude: -1,
+      //     },
+      //     5000
+      //   )
+      //   .start();
+
+      // setTimeout(() => {
+      //   new TWEEN.Tween(this.wave)
+      //     .to(
+      //       {
+      //         waveLength: 100,
+      //         amplitude: -5,
+      //       },
+      //       5000
+      //     )
+      //     .start();
+      // }, 5000);
+      // setTimeout(() => {
+      //   new TWEEN.Tween(this.wave)
+      //     .to(
+      //       {
+      //         waveLength: 244,
+      //         velocity: 0.3,
+      //         amplitude: -1,
+      //       },
+      //       5000
+      //     )
+      //     .start();
+      // }, 10000);
     },
     distance(x1, y1, x2, y2) {
       return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
