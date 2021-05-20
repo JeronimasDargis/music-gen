@@ -153,8 +153,10 @@ export default {
      */
     filterData(audioBuffer) {
       const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
-      const samples = 70; // Number of samples we want to have in our final data set
+
+      const samples = Math.ceil(audioBuffer.duration); // Number of samples we want to have in our final data set
       const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
+      console.log(blockSize);
       const filteredData = [];
       for (let i = 0; i < samples; i++) {
         let blockStart = blockSize * i; // the location of the first sample in the block
@@ -287,19 +289,16 @@ export default {
       this.angle -= this.wave.velocity;
     },
     async initWave(audioUrl) {
-      // this.gridSize = 100;
       const data = await this.drawAudio(audioUrl);
-
       data.forEach((item, id) => {
-        const height = item * 10;
+        const height = 10 - item * 10;
         setTimeout(() => {
-          console.log(-height);
           new TWEEN.Tween(this.wave)
             .to(
               {
                 amplitude: -height,
               },
-              1000
+              500
             )
             .start();
         }, 1000 * id);
