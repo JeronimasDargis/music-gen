@@ -304,40 +304,6 @@ export default {
             .start();
         }, 1000 * id);
       });
-
-      // new TWEEN.Tween(this.wave)
-      //   .to(
-      //     {
-      //       velocity: 0.1,
-      //       amplitude: -1,
-      //     },
-      //     5000
-      //   )
-      //   .start();
-
-      // setTimeout(() => {
-      //   new TWEEN.Tween(this.wave)
-      //     .to(
-      //       {
-      //         waveLength: 100,
-      //         amplitude: -5,
-      //       },
-      //       5000
-      //     )
-      //     .start();
-      // }, 5000);
-      // setTimeout(() => {
-      //   new TWEEN.Tween(this.wave)
-      //     .to(
-      //       {
-      //         waveLength: 244,
-      //         velocity: 0.3,
-      //         amplitude: -1,
-      //       },
-      //       5000
-      //     )
-      //     .start();
-      // }, 10000);
     },
     distance(x1, y1, x2, y2) {
       return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
