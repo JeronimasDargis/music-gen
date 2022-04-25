@@ -1,5 +1,7 @@
 # music-gen
 
+https://brave-kare-641083.netlify.app/
+
 ## Project setup
 ```
 npm install
