@@ -13,7 +13,7 @@ import { TrackballControls } from "../static/TrackballControls.js";
 
 export default {
   data: () => ({
-    backgroundColor: "#a9a9a9",
+    backgroundColor: "#000000",
     ambientLightColor: 0xffffff,
     spotLightColor: 0xffffff,
     boxColor: 0x1a63ed,
